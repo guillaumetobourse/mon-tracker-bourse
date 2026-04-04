@@ -39,6 +39,14 @@ def get_processed_data(ticker):
 
     # 2. Historique & Buffer
     df_hist = yf.download(f"{ticker}.PA", period="3d", interval="15m", progress=False)[['Close']]
+    if isinstance(df_hist.columns, pd.MultiIndex):
+        df_hist = df_hist['Close'][[f"{ticker}.PA"]] # On sélectionne l'étage Close et le Ticker
+    else:
+        df_hist = df_hist[['Close']] # Cas d'un seul ticker (déjà plat)
+    
+    # On renomme la colonne en 'Close' pour qu'elle corresponde exactement au buffer
+    df_hist.columns = ['Close']
+    
     live_p = get_boursorama_live(ticker)
     
     if live_p:
