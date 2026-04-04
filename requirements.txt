@@ -1,1 +1,7 @@
-streamlit, yfinance, pandas, beautifulsoup4, requests, plotly
+streamlit
+pandas
+yfinance
+plotly
+requests
+beautifulsoup4
+numpy
