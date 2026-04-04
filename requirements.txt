@@ -5,4 +5,3 @@ plotly
 requests
 beautifulsoup4
 numpy
-time
