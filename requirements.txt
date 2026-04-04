@@ -4,4 +4,6 @@ yfinance
 plotly
 requests
 beautifulsoup4
+collections
 numpy
+time
