@@ -6,3 +6,4 @@ requests
 beautifulsoup4
 numpy
 curl_cffi
+matplotlib
