@@ -29,18 +29,8 @@ def get_boursorama_live(ticker):
 
 def get_processed_data(ticker):
     # 1. Fondamentaux (Cache pour éviter de saturer l'API)
-    session = requests.Session()
-    session.headers.update({
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-    })
-
-    # On télécharge avec la session
     # L'astuce est de passer la session à l'objet Ticker
-    stock = yf.Ticker(f"{ticker}.PA", session=session)
+    stock = yf.Ticker(f"{ticker}.PA")
 
     info = stock.info
     fundamental = {
@@ -50,12 +40,21 @@ def get_processed_data(ticker):
     }
 
     # 2. Historique & Buffer
-    df_hist = yf.download(f"{ticker}.PA", period="3d", interval="15m", progress=False)[['Close']]
-    if isinstance(df_hist.columns, pd.MultiIndex):
-        df_hist = df_hist['Close'][[f"{ticker}.PA"]] # On sélectionne l'étage Close et le Ticker
-    else:
-        df_hist = df_hist[['Close']] # Cas d'un seul ticker (déjà plat)
-    
+    try:
+        # On utilise directement yf.download ou Ticker sans argument 'session'
+        df_hist = yf.download(f"{ticker}.PA", period="3d", interval="15m", progress=False)
+        
+        # Sécurité MultiIndex (comme vu précédemment)
+        if isinstance(df_hist.columns, pd.MultiIndex):
+            df_hist = df_hist['Close'][[f"{ticker}.PA"]]
+            df_hist.columns = ['Close']
+        else:
+            df_hist = df_hist[['Close']]
+            
+    except Exception as e:
+        st.error(f"Erreur Yahoo Finance : {e}")
+        df_hist = pd.DataFrame(columns=['Close'])
+
     # On renomme la colonne en 'Close' pour qu'elle corresponde exactement au buffer
     df_hist.columns = ['Close']
     
