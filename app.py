@@ -10,12 +10,6 @@ from datetime import datetime
 import time
 import json
 
-from streamlit_autorefresh import st_autorefresh
-
-# Force le rafraîchissement toutes les 60 secondes
-# On lui donne un nom (key) pour éviter les conflits
-#st_autorefresh(interval=60 * 1000, key="datarefresh")
-
 # --- 1. INITIALISATION (CRITIQUE : Doit être au tout début) ---
 if 'tickers' not in st.session_state:
     st.session_state.tickers = {}
